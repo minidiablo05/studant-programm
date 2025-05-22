@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <a href="{% url 'birthdays:add' %}" class="btn btn-primary mb-3">Добавить день рождения</a>
+    
+    <div class="list-group">
+        {% for birthday in birthdays %}
+            <div class="list-group-item d-flex justify-content-between align-items-center">
+                <div>
+                    <h5>{{ birthday.first_name }} {{ birthday.last_name }}</h5>
+                    <small class="text-muted">{{ birthday.birthday|date:"d.m.Y" }}</small>
+                </div>
+                <div>
+                    <a href="{% url 'birthdays:edit' birthday.pk %}" class="btn btn-sm btn-outline-secondary">Изменить</a>
+                </div>
+            </div>
+        {% empty %}
+            <div class="alert alert-info">Нет записей о днях рождениях</div>
+        {% endfor %}
+    </div>
+{% endblock %}
