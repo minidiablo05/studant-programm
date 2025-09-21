@@ -44,7 +44,7 @@ export function createUser({name, email, isActive = true }) {
 export function findUserById(id) {
     const user = users.find(user => user.id === id);
 
-    if (user === -1) return null;
+    if (!user) return null;
 
     const { name, email } = user;
 

@@ -20,9 +20,8 @@ iv. userId — ID пользователя
 c. Используйте деструктуризацию для извлечения полей из заказа
 */
 
-// import { orders } from "./data.js"; не работает
+import { orders } from "./data.js"
 
-import * as data from "./data.js"
 
 export function getUserOrders(userId) {
     return orders.reduce(order => order.userId === userId)
@@ -32,9 +31,9 @@ export function addProductToOrder(orderId, newProduct) {
     const order = orders.find(order => order.id == orderId);
     if (!order) return null;
 
-    order.products = {
+    order.products = [
         ...order.products, newProduct
-    };
+    ];
 
     return order;
 }
@@ -46,7 +45,7 @@ export function getOrderSummary(orderId) {
     const { productsCount, total, status, userId } = order;
 
     return {
-        productsCount: products.length,
+        productsCount: orders.length,
         total: "$${total.toFixed(2)}",
         status: status.toUpperCase(),
         userId

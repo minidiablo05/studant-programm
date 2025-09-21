@@ -1,4 +1,4 @@
-import { users, orders } as data from './data.js';
+import { users, orders } from './data.js';
 import { createUser, findUserById, updateUser } from './userFunctions.js';
 import { getUserOrders, addProductToOrder, getOrderSummary } from './orderFunctions.js';
 import { calculateTotal, formatUserInfo } from './utils.js';
