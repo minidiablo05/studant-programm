@@ -27,7 +27,7 @@ import {users} from './data.js';
 export function createUser({name, email, isActive = true }) {
     const maxId = users.reduce((max, current) => {
         return max.id > current.id ? max : current;
-    });
+    }).id;
 
     const user = {
         id: maxId + 1,
@@ -61,5 +61,5 @@ export function updateUser(id, updatedFields) {
         ...updatedFields
     };
 
-    return user[userId];
+    return users[userId];
 }

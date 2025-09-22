@@ -24,7 +24,7 @@ import { orders } from "./data.js"
 
 
 export function getUserOrders(userId) {
-    return orders.reduce(order => order.userId === userId)
+    return orders.filter(order => order.userId === userId)
 }
 
 export function addProductToOrder(orderId, newProduct) {
@@ -46,7 +46,7 @@ export function getOrderSummary(orderId) {
 
     return {
         productsCount: orders.length,
-        total: "$${total.toFixed(2)}",
+        total: `$${total.toFixed(2)}`,
         status: status.toUpperCase(),
         userId
     };
