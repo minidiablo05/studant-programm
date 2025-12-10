@@ -24,9 +24,7 @@ API.
 • Оптимизировать производительность с помощью параллельных запросов
 */
 
-import {fetchPosts} from './userFunctions';
-
-import {fetchPosts, fetchUsers} from './api';
+import {fetchPosts, fetchUsers} from './api.js';
 
 export async function getRecentPosts(limit) {
     try {
