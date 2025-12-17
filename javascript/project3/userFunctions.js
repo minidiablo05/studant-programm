@@ -30,9 +30,9 @@ import {fetchUsers, fetchUserById, fetchPostsByUserId} from './api.js';
 export async function getActiveUsers(){
     try{
         console.log('Начинаем поиск');
-        const users = await fetchUsers()
+        const users = await fetchUsers();
 
-        const activeUser = users.filter(user => user.id%2 === 0)
+        const activeUser = users.filter(user => user.id%2 === 0);
 
         return activeUser;
     } catch (error) {
@@ -68,3 +68,6 @@ export async function findUserByEmail(email){
         throw error;
     }
 }
+
+
+// getUserWithPosts(2)

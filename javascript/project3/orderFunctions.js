@@ -58,8 +58,8 @@ export async function getPostsStats() {
         const [user, post] = await Promise.all([
             fetchUsers(), fetchPosts()
         ])
-        const totalPosts = posts.length;
-        const totalUsers = users.length;
+        const totalPosts = post.length;
+        const totalUsers = user.length;
         const avg = (totalPosts / totalUsers).toFixed(2);
         return {
             totalPosts,
@@ -71,5 +71,4 @@ export async function getPostsStats() {
         throw error;
     }
 }
-
 

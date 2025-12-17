@@ -29,22 +29,19 @@ b. Должна возвращать массив постов
 */
 
 
+
 export async function fetchUsers() {
     try {
         console.log('Начинаем загрузку данных...');
         
-        const response = await fetch('https://jsonplaceholder.typicode.com/users', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            }
-        })
+        const response = await fetch('https://jsonplaceholder.typicode.com/users')
         if (!response.ok) {
             throw new Error(`Ошибка HTTP: ${response.status}`);
         }
 
         console.log('Данные загружены!');
-        return await response.json();
+        const data = await response.json();
+        return data;
     } catch (error) {
         console.error('Не удалось загрузить данные:', error);
     }
@@ -83,12 +80,7 @@ export async function fetchPosts() {
     try {
         console.log('Начинаем загрузку данных...');
         
-        const response = await fetch('https://jsonplaceholder.typicode.com/posts', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            }
-        })
+        const response = await fetch('https://jsonplaceholder.typicode.com/posts')
         if (!response.ok) {
             throw new Error(`Ошибка HTTP: ${response.status}`);
         }
@@ -120,8 +112,12 @@ export async function fetchPostsByUserId(userId) {
 }
 
 
-// fetchUsers();
+
+// console.log(await fetchUsers());
 // fetchUserById(1);
 // fetchUserById(1000);
 // fetchPostsByUserId(1000)
 // console.log(fetchPosts())
+// console.log(await fetchPosts())
+
+
