@@ -4,65 +4,39 @@
 // Ссылка на исходник: https://purpleschool.ru/knowledge-base/article/react-native-navigation
 
 
-
+// Импорт необходимых компонентов
 import * as React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { View, Text, Button } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native'; // Контейнер для навигации
+import { createNativeStackNavigator } from '@react-navigation/native-stack'; // Создаём стек
 
+// Создание объекта стека
 const Stack = createNativeStackNavigator();
 
+// Объявляем экраны
 function HomeScreen({ navigation }) {
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text>Главный экран</Text>
-      <Button
-        title="Перейти на детали"
-        onPress={() => navigation.navigate('Details')}
-      />
-    </View>
+    // Кнопка для перехода к DetailsScreen
+    <Button
+      title="Перейти на детали"
+      onPress={() => navigation.navigate('Details')}
+    />
   );
 }
 
-function DetailsScreen({ navigation }) {
+function DetailsScreen() {
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text>Экран с деталями</Text>
-      <Button
-        title="Назад"
-        onPress={() => navigation.goBack()}
-      />
-    </View>
+    <Text>Экран с деталями</Text>
   );
 }
 
+// Основной компонент приложения
 export default function App() {
   return (
+    // NavigationContainer обязательно должен быть на верхнем уровне
     <NavigationContainer>
-      <Stack.Navigator
-        // ✅ Безопасные screenOptions
-        screenOptions={{
-          headerShown: true, // явный boolean
-          animation: 'slide_from_right',
-        }}
-        initialRouteName="Home"
-      >
-        <Stack.Screen 
-          name="Home" 
-          component={HomeScreen}
-          options={{
-            title: 'Главная',
-            // ✅ Убедитесь, что все булевы значения - именно boolean
-            headerBackVisible: false,
-          }}
-        />
-        <Stack.Screen 
-          name="Details" 
-          component={DetailsScreen}
-          options={{
-            title: 'Детали',
-          }}
-        />
+      <Stack.Navigator>
+        <Stack.Screen name="Home" component={HomeScreen} />
+        <Stack.Screen name="Details" component={DetailsScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
