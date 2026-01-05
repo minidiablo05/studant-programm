@@ -1,62 +1,69 @@
-import React from 'react';
+
+
+
+// Ссылка на исходник: https://purpleschool.ru/knowledge-base/article/react-native-navigation
+
+
+
+import * as React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { View, Text, Button } from 'react-native';
 
-// Импортируем экраны
-import SignUpScreen from './screens/SignUpScreen';
-import LoginScreen from './screens/LoginScreen';
-import HomeScreen from './screens/HomeScreen';
+const Stack = createNativeStackNavigator();
 
-// Создаем навигатор
-const Stack = createStackNavigator();
+function HomeScreen({ navigation }) {
+  return (
+    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <Text>Главный экран</Text>
+      <Button
+        title="Перейти на детали"
+        onPress={() => navigation.navigate('Details')}
+      />
+    </View>
+  );
+}
 
-function App() {
+function DetailsScreen({ navigation }) {
+  return (
+    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <Text>Экран с деталями</Text>
+      <Button
+        title="Назад"
+        onPress={() => navigation.goBack()}
+      />
+    </View>
+  );
+}
+
+export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator
-        initialRouteName="SignUp"
+        // ✅ Безопасные screenOptions
         screenOptions={{
-          headerStyle: {
-            backgroundColor: '#bde5dd',
-          },
-          headerTintColor: '#1fab89',
-          headerTitleStyle: {
-            fontWeight: 'bold',
-            fontSize: 20,
-          },
-          headerTitleAlign: 'center',
-          cardStyle: {
-            backgroundColor: '#bde5dd',
-          },
+          headerShown: true, // явный boolean
+          animation: 'slide_from_right',
         }}
+        initialRouteName="Home"
       >
-        <Stack.Screen 
-          name="SignUp" 
-          component={SignUpScreen}
-          options={{
-            title: 'Регистрация',
-            headerShown: true,
-          }}
-        />
-        <Stack.Screen 
-          name="Login" 
-          component={LoginScreen}
-          options={{
-            title: 'Вход в аккаунт',
-            headerShown: true,
-          }}
-        />
         <Stack.Screen 
           name="Home" 
           component={HomeScreen}
           options={{
             title: 'Главная',
-            headerShown: true,
+            // ✅ Убедитесь, что все булевы значения - именно boolean
+            headerBackVisible: false,
+          }}
+        />
+        <Stack.Screen 
+          name="Details" 
+          component={DetailsScreen}
+          options={{
+            title: 'Детали',
           }}
         />
       </Stack.Navigator>
     </NavigationContainer>
   );
 }
-
-export default App;
