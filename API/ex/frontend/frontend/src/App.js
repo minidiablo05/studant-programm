@@ -3,7 +3,6 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { AuthProvider } from './api/auth';
 import Header from './components/Header';
 import ProtectedRoute from './components/ProtectedRoute';
-import AdminRoute from './components/AdminRoute';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -12,8 +11,6 @@ import Users from './pages/Users';
 import './App.css';
 
 function App() {
-  console.log('App component rendering');
-  
   return (
     <AuthProvider>
       <Router>
@@ -21,6 +18,7 @@ function App() {
           <Header />
           <div className="container">
             <Routes>
+              <Route path="/" element={<Home />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
               <Route 
@@ -31,15 +29,7 @@ function App() {
                   </ProtectedRoute>
                 } 
               />
-              <Route 
-                path="/users" 
-                element={
-                  <AdminRoute>
-                    <Users />
-                  </AdminRoute>
-                } 
-              />
-              <Route path="/" element={<Home />} />
+              <Route path="/users" element={<Users />} />
               <Route path="*" element={<Navigate to="/" />} />
             </Routes>
           </div>

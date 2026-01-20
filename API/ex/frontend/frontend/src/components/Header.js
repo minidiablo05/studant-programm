@@ -36,7 +36,7 @@ const Header = () => {
           {isAuthenticated ? (
             <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
               <span style={{ color: '#666' }}>
-                Привет, {user.first_name} {user.last_name}
+                {user?.first_name || 'User'}
               </span>
               <Link to="/profile" style={{
                 textDecoration: 'none',
@@ -44,14 +44,12 @@ const Header = () => {
               }}>
                 Профиль
               </Link>
-              {user.is_staff && (
-                <Link to="/users" style={{
-                  textDecoration: 'none',
-                  color: '#007bff'
-                }}>
-                  Пользователи
-                </Link>
-              )}
+              <Link to="/users" style={{
+                textDecoration: 'none',
+                color: '#007bff'
+              }}>
+                Пользователи
+              </Link>
               <Button 
                 variant="secondary" 
                 onClick={handleLogout}

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '../api/auth';
-import axios from 'axios'; // Импортируем чистый axios
+import axios from 'axios';
 import Input from '../components/Input';
 import Loader from '../components/Loader';
 
@@ -9,42 +8,42 @@ const Users = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [search, setSearch] = useState('');
-  const { user: currentUser } = useAuth();
 
   useEffect(() => {
+    console.log('Users page loaded');
     fetchUsers();
   }, []);
 
   const fetchUsers = async (searchQuery = '') => {
     try {
       setLoading(true);
-      const token = localStorage.getItem('token');
       
-      if (!token) {
-        setError('Необходима авторизация');
-        setLoading(false);
-        return;
-      }
-
+      // Получаем токен
+      const token = localStorage.getItem('token');
+      console.log('Token exists:', !!token);
+      
       const config = {
         headers: {
           'Authorization': `Bearer ${token}`
-        },
-        params: searchQuery ? { search: searchQuery } : {}
+        }
       };
 
+      // Если есть поисковый запрос, добавляем его
+      if (searchQuery) {
+        config.params = { search: searchQuery };
+      }
+
+      console.log('Fetching users from API...');
       const response = await axios.get('http://localhost:8000/api/users/', config);
+      
+      console.log('Users received:', response.data);
       setUsers(response.data);
       setError('');
     } catch (err) {
-      if (err.response?.status === 403) {
-        setError('У вас нет прав для просмотра списка пользователей');
-      } else if (err.response?.status === 401) {
-        setError('Требуется авторизация');
-      } else {
-        setError('Ошибка при загрузке пользователей');
-      }
-      console.error('Error fetching users:', err);
+      console.error('Full error:', err);
+      console.error('Error response:', err.response);
+      
+      setError(`Ошибка: ${err.message}. Проверьте консоль для подробностей.`);
     } finally {
       setLoading(false);
     }
@@ -53,41 +52,46 @@ const Users = () => {
   const handleSearch = (e) => {
     const value = e.target.value;
     setSearch(value);
-    // Добавим небольшую задержку для поиска
-    const timeoutId = setTimeout(() => {
-      fetchUsers(value);
-    }, 300);
-    
-    return () => clearTimeout(timeoutId);
+    fetchUsers(value);
   };
 
-  const handleSearchSubmit = (e) => {
-    e.preventDefault();
-    fetchUsers(search);
+  const handleClearSearch = () => {
+    setSearch('');
+    fetchUsers();
   };
 
-  if (loading && !users.length) {
+  if (loading) {
     return <Loader />;
   }
 
   return (
     <div className="card">
-      <h2>Управление пользователями</h2>
+      <h2>Список пользователей</h2>
       
-      {error && <div className="error">{error}</div>}
+      {error && (
+        <div className="error">
+          <p>{error}</p>
+          <p>Убедитесь что:</p>
+          <ul>
+            <li>Вы вошли в систему</li>
+            <li>Имеете права администратора (is_staff: true)</li>
+            <li>Сервер backend запущен на localhost:8000</li>
+          </ul>
+        </div>
+      )}
       
-      <div style={{ marginBottom: '30px' }}>
-        <form onSubmit={handleSearchSubmit}>
-          <Input
-            type="text"
-            name="search"
-            label="Поиск пользователей"
-            value={search}
-            onChange={handleSearch}
-            placeholder="Поиск по email, имени или фамилии..."
-          />
+      <div style={{ marginBottom: '20px' }}>
+        <Input
+          type="text"
+          name="search"
+          label="Поиск пользователей"
+          value={search}
+          onChange={handleSearch}
+          placeholder="Поиск по email, имени или фамилии..."
+        />
+        <div style={{ marginTop: '10px' }}>
           <button 
-            type="submit"
+            onClick={() => fetchUsers(search)}
             style={{
               padding: '10px 20px',
               backgroundColor: '#28a745',
@@ -95,117 +99,106 @@ const Users = () => {
               border: 'none',
               borderRadius: '4px',
               cursor: 'pointer',
-              marginTop: '10px'
+              marginRight: '10px'
             }}
           >
             Найти
           </button>
           <button 
-            type="button"
-            onClick={() => {
-              setSearch('');
-              fetchUsers();
-            }}
+            onClick={handleClearSearch}
             style={{
               padding: '10px 20px',
               backgroundColor: '#6c757d',
               color: 'white',
               border: 'none',
               borderRadius: '4px',
-              cursor: 'pointer',
-              marginTop: '10px',
-              marginLeft: '10px'
+              cursor: 'pointer'
             }}
           >
             Сбросить
           </button>
-        </form>
+        </div>
       </div>
       
       {users.length === 0 ? (
         <div style={{ textAlign: 'center', padding: '40px' }}>
           <p>Пользователи не найдены</p>
+          <button 
+            onClick={() => fetchUsers()}
+            style={{
+              padding: '10px 20px',
+              backgroundColor: '#007bff',
+              color: 'white',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              marginTop: '10px'
+            }}
+          >
+            Попробовать снова
+          </button>
         </div>
       ) : (
-        <div style={{ overflowX: 'auto' }}>
-          <table style={{
-            width: '100%',
-            borderCollapse: 'collapse',
-            marginTop: '20px'
-          }}>
-            <thead>
-              <tr style={{
-                backgroundColor: '#f8f9fa',
-                borderBottom: '2px solid #dee2e6'
-              }}>
-                <th style={{ padding: '12px', textAlign: 'left' }}>ID</th>
-                <th style={{ padding: '12px', textAlign: 'left' }}>Email</th>
-                <th style={{ padding: '12px', textAlign: 'left' }}>Имя</th>
-                <th style={{ padding: '12px', textAlign: 'left' }}>Фамилия</th>
-                <th style={{ padding: '12px', textAlign: 'left' }}>Роль</th>
-                <th style={{ padding: '12px', textAlign: 'left' }}>Текущий</th>
-              </tr>
-            </thead>
-            <tbody>
-              {users.map((user) => (
-                <tr 
-                  key={user.id}
-                  style={{
-                    borderBottom: '1px solid #dee2e6',
-                    backgroundColor: user.is_staff ? '#f0f7ff' : 'white',
-                    ...(currentUser?.id === user.id && {
-                      backgroundColor: '#fff3cd',
-                      fontWeight: 'bold'
-                    })
-                  }}
-                >
-                  <td style={{ padding: '12px' }}>{user.id}</td>
-                  <td style={{ padding: '12px' }}>{user.email}</td>
-                  <td style={{ padding: '12px' }}>{user.first_name || '-'}</td>
-                  <td style={{ padding: '12px' }}>{user.last_name || '-'}</td>
-                  <td style={{ padding: '12px' }}>
-                    <span style={{
-                      display: 'inline-block',
-                      padding: '4px 8px',
-                      borderRadius: '4px',
-                      backgroundColor: user.is_staff ? '#007bff' : '#6c757d',
-                      color: 'white',
-                      fontSize: '12px'
-                    }}>
-                      {user.is_staff ? 'Администратор' : 'Пользователь'}
-                    </span>
-                  </td>
-                  <td style={{ padding: '12px' }}>
-                    {currentUser?.id === user.id && (
+        <div>
+          <div style={{ overflowX: 'auto' }}>
+            <table style={{
+              width: '100%',
+              borderCollapse: 'collapse',
+              marginTop: '20px'
+            }}>
+              <thead>
+                <tr style={{
+                  backgroundColor: '#f8f9fa',
+                  borderBottom: '2px solid #dee2e6'
+                }}>
+                  <th style={{ padding: '12px', textAlign: 'left' }}>ID</th>
+                  <th style={{ padding: '12px', textAlign: 'left' }}>Email</th>
+                  <th style={{ padding: '12px', textAlign: 'left' }}>Имя</th>
+                  <th style={{ padding: '12px', textAlign: 'left' }}>Фамилия</th>
+                  <th style={{ padding: '12px', textAlign: 'left' }}>Роль</th>
+                </tr>
+              </thead>
+              <tbody>
+                {users.map((user) => (
+                  <tr 
+                    key={user.id}
+                    style={{
+                      borderBottom: '1px solid #dee2e6'
+                    }}
+                  >
+                    <td style={{ padding: '12px' }}>{user.id}</td>
+                    <td style={{ padding: '12px' }}>{user.email}</td>
+                    <td style={{ padding: '12px' }}>{user.first_name || '-'}</td>
+                    <td style={{ padding: '12px' }}>{user.last_name || '-'}</td>
+                    <td style={{ padding: '12px' }}>
                       <span style={{
                         display: 'inline-block',
                         padding: '4px 8px',
                         borderRadius: '4px',
-                        backgroundColor: '#ffc107',
-                        color: '#212529',
+                        backgroundColor: user.is_staff ? '#007bff' : '#6c757d',
+                        color: 'white',
                         fontSize: '12px'
                       }}>
-                        Вы
+                        {user.is_staff ? 'Администратор' : 'Пользователь'}
                       </span>
-                    )}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          
+          <div style={{ 
+            marginTop: '20px', 
+            color: '#666',
+            padding: '10px',
+            backgroundColor: '#f8f9fa',
+            borderRadius: '4px'
+          }}>
+            <p>Найдено пользователей: {users.length}</p>
+          </div>
         </div>
       )}
-      
-      <div style={{ 
-        marginTop: '20px', 
-        color: '#666',
-        padding: '10px',
-        backgroundColor: '#f8f9fa',
-        borderRadius: '4px'
-      }}>
-        <p>Найдено пользователей: {users.length}</p>
-        <p>Текущий пользователь: {currentUser?.email} (ID: {currentUser?.id})</p>
-      </div>
     </div>
   );
 };
