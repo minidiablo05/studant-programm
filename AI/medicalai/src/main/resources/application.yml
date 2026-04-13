@@ -1,0 +1,18 @@
+server:
+  port: 8080
+
+spring:
+  ai:
+    model:
+      chat: ollama
+      embedding: ollama
+
+    ollama:
+      base-url: http://localhost:11434
+      chat:
+        options:
+          model: llama3.2
+      embedding:
+        options:
+          model: mxbai-embed-large
+

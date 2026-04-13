@@ -1,0 +1,6 @@
+package com.example.medicalai.dto;
+
+public record MedicalRecordDTO(
+    String patientName,
+    String historyText
+) {}
