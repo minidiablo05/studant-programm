@@ -32,14 +32,20 @@ public class MedicalRecordServiceImpl implements MedicalRecordService {
     public List<String> findSimilar(String query) {
         SearchRequest request = SearchRequest.builder()
                 .query(query)
-                .topK(5)
-                .similarityThreshold(0.7)
+                .topK(10)
+                .similarityThreshold(0.0)
                 .build();
 
-        return vectorStore.similaritySearch(request).stream()
+        List<Document> results = vectorStore.similaritySearch(request);
+
+        return results.stream()
                 .map(doc -> {
-                    Object patientName = doc.getMetadata().get("patientName");
-                    return "Пациент: " + patientName + "\nИстория: " + doc.getText();
+                    String patientId = String.valueOf(
+                            doc.getMetadata().getOrDefault("patientName", "unknown")
+                    );
+                    String text = doc.getText() == null ? "" : doc.getText();
+
+                    return "IDX: " + patientId + "\nNote: " + text;
                 })
                 .toList();
     }
